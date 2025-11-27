@@ -13,4 +13,4 @@ echo "Running ROOT init script..."
 node dist/initRoot.js || echo "Root init skipped."
 
 echo "Starting NestJS..."
-node dist/main.js
+node dist/src/main.js
