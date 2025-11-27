@@ -1,0 +1,99 @@
+// schema.prisma
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ---------------------------
+// Администраторы
+// ---------------------------
+model Admin {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(MANAGER)
+  refreshtoken String?
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  MANAGER
+  ROOT
+}
+
+// Важно: чтобы ограничить систему до одного root, создайте частичный уникальный индекс в Supabase/PostgreSQL:
+
+//CREATE UNIQUE INDEX one_root_only ON "Admin" (role) WHERE role = 'ROOT';
+
+//Дополнительно можно проверять при создании администратора через Prisma Client,
+//чтобы избежать создания второго root.
+
+// ---------------------------
+// Владельцы магазинов
+// ---------------------------
+model Owner {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String?   @unique
+  phone     String?
+  address   String?
+  stores    Store[]   // Один владелец может иметь несколько магазинов
+  createdAt DateTime  @default(now())
+}
+
+// ---------------------------
+// Магазины
+// ---------------------------
+model Store {
+  id        Int        @id @default(autoincrement())
+  name      String
+  address   String
+  login     String     @unique
+  password  String
+  ownerId   Int
+  owner     Owner      @relation(fields: [ownerId], references: [id])
+  terminals Terminal[]
+  requests  TerminalRequest[]
+  createdAt DateTime   @default(now())
+}
+
+// ---------------------------
+// Терминалы ККМ
+// ---------------------------
+model Terminal {
+  id        Int           @id @default(autoincrement())
+  mac       String        @unique
+  status    TerminalStatus @default(ACTIVE)
+  storeId   Int
+  store     Store         @relation(fields: [storeId], references: [id])
+  createdAt DateTime      @default(now())
+}
+
+enum TerminalStatus {
+  ACTIVE
+  INACTIVE
+}
+
+// ---------------------------
+// Заявки на подключение терминалов
+// ---------------------------
+model TerminalRequest {
+  id          Int           @id @default(autoincrement())
+  requestedAt DateTime      @default(now())
+  mac         String
+  storeId     Int
+  store       Store         @relation(fields: [storeId], references: [id])
+  status      RequestStatus @default(PENDING)
+  comment     String?
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
