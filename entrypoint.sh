@@ -1,11 +1,12 @@
 #!/bin/sh
 
+set -e
+
 echo "Wait for PostgreSQL..."
 sleep 5
 
 echo "Applying Prisma migrations..."
 npx prisma db push
-npx prisma migrate deploy
 
 echo "Generating Prisma client..."
 npx prisma generate
