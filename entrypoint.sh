@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -e
-
 echo "Wait for PostgreSQL..."
 sleep 5
 
