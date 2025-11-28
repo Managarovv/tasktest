@@ -2,17 +2,17 @@
 
 1. Склонировать проект
 2. Создать в корне проекта .env с переменными:
-   
-  POSTGRES_USER=
-  POSTGRES_PASSWORD=
-  POSTGRES_DB=
-  DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db: 5432/${POSTGRES_DB}?schema-public"
-  SECRET_KEY=
-  ROOT_ADMIN_EMAIL=
-  ROOT_ADMIN_PASSWORD=
 
-3. docker compose up -d --build
-4. Тестировать с Postman:
+   POSTGRES_USER=
+   POSTGRES_PASSWORD=
+   POSTGRES_DB=
+   DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db: 5432/${POSTGRES_DB}?schema-public"
+   SECRET_KEY=
+   ROOT_ADMIN_EMAIL=
+   ROOT_ADMIN_PASSWORD=
+
+4. docker compose up -d --build
+5. Тестировать с Postman:
   POST /auth/login — Body {mail: string, pass: string} Вернет { access_token: access_token, refresh_token: refresh_token } или message error
   POST /auth/logout — Body { reftoken: string } Вернет message
   POST /auth/refresh — Body { reftoken: string } Вернет { access_token: access_token, refresh_token: refresh_token } или message error
